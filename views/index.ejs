@@ -2,11 +2,24 @@
 <%- include partials/main_nav.ejs %> 
 
     <!--main container-->
-    <main class="container padding-top: 60px;">
-      <div class="jumbotron">
-        <h1 class="display-5">Hello,  <%= title %>!</h1>
+    <main class="container ">
+      <div class="min-vh-100 text-center m-0 bg-light d-flex flex-column justify-content-sm-center ">
+        <div class="description">
+          <h1>Welcome!</h1>
+          <figure class="figure">
+            <img src="assets/img/logo.ico" class="figure-img img-fluid rounded" alt="A Miguel Suevis Logo">
+            <figcaption class="figure-caption">&copy; copyrihts 2022 All Rights reserved.</figcaption>
+          </figure>
+          <p>
+            Website for programming lovers, if you are interested in learning about new architectures, 
+            design patterns, programming languages, you have come to the right place, stay and together 
+            we will learn a little more about this wonderful world
+            </p>
+        </div>
       </div>
     </main>
+
+    
 
     <%- include partials/bottom_nav.ejs %> 
     <%- include partials/footer.ejs %> 
