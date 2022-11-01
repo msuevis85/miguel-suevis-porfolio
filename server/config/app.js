@@ -1,8 +1,9 @@
-let createError = require('http-errors');
-let express = require('express');
-let path = require('path');
-let cookieParser = require('cookie-parser');
-let logger = require('morgan');
+// moddules for node and express
+let createError = require("http-errors");
+let express = require("express");
+let path = require("path");
+let cookieParser = require("cookie-parser");
+let logger = require("morgan");
 
 
 //modules for authentication
@@ -12,35 +13,47 @@ let passportLocal = require("passport-local");
 let localStratergy = passportLocal.Strategy;
 let flash = require("connect-flash");
 
-//database_setup
+// import "mongoose" - required for DB Access
 let mongoose = require("mongoose");
+// URI
 let DB = require("./db");
 
-//point mongoose to the DB URI
-mongoose.connect(DB.URI, { useNewUrlParser: true, useUnifiedTopology: true });
-
-let mongodb = mongoose.connection;
-mongodb.on("error", console.error.bind(console, "connection error:"));
-mongodb.once("open", () => {
-  console.log("Database Connected");
+mongoose.connect(process.env.URI || DB.URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 });
 
-let indexRouter = require('../routes/index');
-let usersRouter = require('../routes/users');
-let contactRouter = require('../routes/contact');
+let mongoDB = mongoose.connection;
+mongoDB.on("error", console.error.bind(console, "Connection Error:"));
+mongoDB.once("open", () => {
+  console.log("Database Connected!...");
+});
+
+// define routers
+let index = require("../routes/index"); // top level routes
+let contact = require("../routes/contact"); // routes for contact
+const user = require("../routes/user");
 
 let app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, '../views'));
-app.set('view engine', 'ejs');
+//initialize flash
+app.use(flash());
 
-app.use(logger('dev'));
+// view engine setup
+app.set("views", path.join(__dirname, "../views"));
+app.set("view engine", "ejs");
+
+// uncomment after placing your favicon in /client
+app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({
+  extended: true
+}));
+app.use(express.static(path.join(__dirname, "../../client")));
 app.use(express.static(path.join(__dirname, '../../public')));
-app.use(express.static(path.join(__dirname, '../../node_modules')));
 
 //setup express session
 app.use(
@@ -71,26 +84,25 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.use('/',indexRouter);
-app.use('/users', usersRouter);
-app.use('/contacts',contactRouter);
-
+// route redirects
+app.use("/", index);
+app.use("/contact", contact);
+app.use("/user", user);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  res.locals.error = req.app.get("env") === "development" ? err : {};
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error',{title : 'Error'});
-  
+  res.render("error");
 });
 
 module.exports = app;

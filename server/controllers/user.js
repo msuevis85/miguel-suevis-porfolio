@@ -14,7 +14,7 @@ let User = userModel.User;
       if (req.isAuthenticated()) {
         return next()
       }
-      res.redirect('/users/login'); // if not auth
+      res.redirect('/user/login'); // if not auth
     },
 
 
@@ -43,13 +43,13 @@ let User = userModel.User;
         // is there a user login error?
         if (!user) {
           req.flash("loginMessage", "Authentication Error");
-          return res.redirect("/users/login");
+          return res.redirect("/user/login");
         }
         req.login(user, (err) => {
           if (err) {
             return next(err);
           }
-          return res.redirect("/contacts/list");
+          return res.redirect("/contact/list");
         });
       })(req, res, next);
     },
